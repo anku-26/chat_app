@@ -12,7 +12,7 @@ export const LandingPage = () => {
   const [id, setId] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
 
-
+ 
   const random = () => {
     const generatedId = idgen();
     console.log(generatedId);
@@ -22,6 +22,10 @@ export const LandingPage = () => {
   const back = () => {
     //@ts-ignore
     const inputId = inputRef.current.value;
+    if (!ws) {
+      console.log("WebSocket not available");
+      return;
+    }
 
     ws?.send(
       JSON.stringify({

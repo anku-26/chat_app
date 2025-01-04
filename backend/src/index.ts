@@ -9,12 +9,18 @@ const sockerarr : ur [] = [];
 const ws = new WebSocketServer({port : 8080});
 
 ws.on("connection", (socket) =>{
-      console.log("connedted"); 
+      console.log("connected"); 
+
+      socket.on("close", () => {
+        console.log("Client disconnected");
+      })
 
      socket.on("message", (massage)=>{
         const message = massage.toString();
         console.log("Raw message received:", message);
         const parseMsg = JSON.parse(message); 
+        console.log(parseMsg.type);
+      
 
         if(parseMsg.type==='join') {
           sockerarr.push({
@@ -51,7 +57,7 @@ ws.on("connection", (socket) =>{
            
            
             for (let i = 0; i < sockerarr.length; i++) {
-                if (sockerarr[i].roomId === room ) {
+                if (sockerarr[i].roomId === room && sockerarr[i].sockets != socket ) {
                     sockerarr[i].sockets.send(
                         JSON.stringify({
                             type: "chat",

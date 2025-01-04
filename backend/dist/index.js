@@ -4,11 +4,15 @@ const ws_1 = require("ws");
 const sockerarr = [];
 const ws = new ws_1.WebSocketServer({ port: 8080 });
 ws.on("connection", (socket) => {
-    console.log("connedted");
+    console.log("connected");
+    socket.on("close", () => {
+        console.log("Client disconnected");
+    });
     socket.on("message", (massage) => {
         const message = massage.toString();
         console.log("Raw message received:", message);
         const parseMsg = JSON.parse(message);
+        console.log(parseMsg.type);
         if (parseMsg.type === 'join') {
             sockerarr.push({
                 sockets: socket,
@@ -32,7 +36,7 @@ ws.on("connection", (socket) => {
             }
             console.log(`Broadcasting message to room: ${room}`);
             for (let i = 0; i < sockerarr.length; i++) {
-                if (sockerarr[i].roomId === room) {
+                if (sockerarr[i].roomId === room && sockerarr[i].sockets != socket) {
                     sockerarr[i].sockets.send(JSON.stringify({
                         type: "chat",
                         payload: { message: parseMsg.payload.message }
